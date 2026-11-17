@@ -517,6 +517,7 @@ type DeviceInfo struct {
 	APMode             *bool        `json:"ap_mode"`
 	PreferIPv6         *bool        `json:"prefer_ipv6"`
 	SwapColors         *bool        `json:"swap_colors"`
+	Clock8MHz          *bool        `json:"clock_8mhz"`
 	ColorOrder         *string      `json:"color_order"`
 	DisableTouch       *bool        `json:"disable_touch"`
 	TouchBeep          *bool        `json:"touch_beep"`

@@ -227,6 +227,7 @@ func TestHandleGetDevice(t *testing.T) {
 	device.Info.APMode = new(true)
 	device.Info.PreferIPv6 = new(true)
 	device.Info.SwapColors = new(true)
+	device.Info.Clock8MHz = new(true)
 	device.Info.ColorOrder = new("bgr")
 	device.Info.TouchBeep = new(true)
 	device.Info.ImageURL = new("http://example.com/image.png")
@@ -274,6 +275,8 @@ func TestHandleGetDevice(t *testing.T) {
 	if payload.Info.SwapColors == nil || !*payload.Info.SwapColors {
 		t.Errorf("Expected SwapColors to be true, got %v", payload.Info.SwapColors)
 	}
+	require.NotNil(t, payload.Info.Clock8MHz, "Expected Clock8MHz to be set")
+	assert.True(t, *payload.Info.Clock8MHz)
 	require.NotNil(t, payload.Info.ColorOrder, "Expected ColorOrder to be set")
 	assert.Equal(t, "bgr", *payload.Info.ColorOrder)
 	require.NotNil(t, payload.Info.TouchBeep, "Expected TouchBeep to be set")
@@ -1415,6 +1418,7 @@ func TestHandleUpdateFirmwareSettingsAPI(t *testing.T) {
 		ImageURL:           new("http://example.com/test.png"),
 		ColorOrder:         new("gbr"),
 		TouchBeep:          new(true),
+		Clock8MHz:          new(true),
 	}
 	body, _ := json.Marshal(payload)
 
@@ -1448,7 +1452,7 @@ func TestHandleUpdateFirmwareSettingsAPI(t *testing.T) {
 			t.Fatalf("failed to unmarshal payload from broadcaster: %v", err)
 		}
 
-		assert.Len(t, receivedPayload, 6)
+		assert.Len(t, receivedPayload, 7)
 		if val, ok := receivedPayload["skip_display_version"].(bool); !ok || !val {
 			t.Errorf("expected skip_display_version to be true, got %v", receivedPayload["skip_display_version"])
 		}
@@ -1463,6 +1467,7 @@ func TestHandleUpdateFirmwareSettingsAPI(t *testing.T) {
 		}
 		assert.Equal(t, "gbr", receivedPayload["color_order"])
 		assert.Equal(t, true, receivedPayload["touch_beep"])
+		assert.Equal(t, true, receivedPayload["clock_8mhz"])
 	case <-time.After(1 * time.Second):
 		t.Fatal("timed out waiting for broadcaster notification")
 	}

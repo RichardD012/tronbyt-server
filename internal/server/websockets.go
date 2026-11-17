@@ -44,6 +44,7 @@ type ClientInfo struct {
 	APMode             *bool   `json:"ap_mode"`
 	PreferIPv6         *bool   `json:"prefer_ipv6"`
 	SwapColors         *bool   `json:"swap_colors"`
+	Clock8MHz          *bool   `json:"clock_8mhz"`
 	ColorOrder         *string `json:"color_order"`
 	DisableTouch       *bool   `json:"disable_touch"`
 	TouchBeep          *bool   `json:"touch_beep"`
@@ -235,6 +236,9 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 				}
 				if msg.ClientInfo.SwapColors != nil {
 					device.Info.SwapColors = msg.ClientInfo.SwapColors
+				}
+				if msg.ClientInfo.Clock8MHz != nil {
+					device.Info.Clock8MHz = msg.ClientInfo.Clock8MHz
 				}
 				if msg.ClientInfo.ColorOrder != nil {
 					// Store the canonical lower-case form so the settings page

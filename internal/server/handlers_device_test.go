@@ -589,6 +589,65 @@ func TestHandleUpdateDeviceGet_TouchBeepVisibility(t *testing.T) {
 	}
 }
 
+// TestHandleUpdateFirmwareSettings_Clock8MHz verifies the expected behavior under test.
+func TestHandleUpdateFirmwareSettings_Clock8MHz(t *testing.T) {
+	s := newTestServer(t)
+	ctx := context.Background()
+
+	user := data.User{Username: "testuser"}
+	require.NoError(t, gorm.G[data.User](s.DB).Create(ctx, &user))
+	device := data.Device{
+		ID:       "testdevice",
+		Username: "testuser",
+		Name:     "Test Device",
+	}
+	require.NoError(t, gorm.G[data.Device](s.DB).Create(ctx, &device))
+
+	// The checkbox posts "true" or "false"; both must reach the device.
+	for _, value := range []bool{true, false} {
+		assertFirmwareBoolBroadcast(t, s, &user, &device, "clock_8mhz", value)
+	}
+}
+
+// The 8MHz Pixel Clock checkbox is only offered for a Tidbyt Gen1/Gen2 whose
+// firmware reported clock_8mhz in client_info; older firmware never reports it.
+func TestHandleUpdateDeviceGet_Clock8MHzVisibility(t *testing.T) {
+	s := newTestServer(t)
+	ctx := context.Background()
+
+	user := data.User{Username: "testuser"}
+	require.NoError(t, gorm.G[data.User](s.DB).Create(ctx, &user))
+
+	for _, tc := range []struct {
+		name        string
+		deviceType  data.DeviceType
+		clock8MHz   *bool
+		wantShown   bool
+		wantChecked bool
+	}{
+		{"gen1 reported on", data.DeviceTidbytGen1, new(true), true, true},
+		{"gen2 reported on", data.DeviceTidbytGen2, new(true), true, true},
+		{"gen2 reported off", data.DeviceTidbytGen2, new(false), true, false},
+		{"gen2 not reported", data.DeviceTidbytGen2, nil, false, false},
+		{"s3 reported on", data.DeviceTronbytS3, new(true), false, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			device := data.Device{
+				ID:       "testdevice",
+				Username: "testuser",
+				Name:     "Test Device",
+				Type:     tc.deviceType,
+			}
+			device.Info.ProtocolType = data.ProtocolWS
+			device.Info.FirmwareType = "ESP32"
+			device.Info.FirmwareVersion = "dev"
+			device.Info.Clock8MHz = tc.clock8MHz
+
+			assertFirmwareCheckboxState(t, s, &user, device, "clock_8mhz", tc.wantShown, tc.wantChecked)
+		})
+	}
+}
+
 // TestHandleUpdateFirmwareSettings_StartupSound verifies the expected behavior under test.
 func TestHandleUpdateFirmwareSettings_StartupSound(t *testing.T) {
 	s := newTestServer(t)

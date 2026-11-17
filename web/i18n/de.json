@@ -2282,6 +2282,12 @@
   "Startup Sound": {
     "other": "Startton"
   },
+  "8MHz Pixel Clock": {
+    "other": "8-MHz-Pixeltakt"
+  },
+  "Runs the panel at a true 8MHz instead of 10MHz. Fixes red artifacts on some Tidbyt Gen 1 / Gen 2 panels. Requires reboot to take effect.": {
+    "other": "Betreibt das Panel mit echten 8 MHz statt 10 MHz. Behebt rote Artefakte bei einigen Tidbyt Gen 1 / Gen 2 Panels. Erfordert einen Neustart."
+  },
   "Plays a short jingle on boot when the device starts up.": {
     "other": "Spielt beim Starten des Geräts einen kurzen Jingle ab."
   },

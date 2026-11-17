@@ -124,6 +124,7 @@ func TestWebsockets_Client(t *testing.T) {
 		MACAddress:      "00:11:22:33:44:55",
 		ColorOrder:      new("GBR"), // stored normalized, see normalizeColorOrder
 		TouchBeep:       new(true),
+		Clock8MHz:       new(true),
 	}
 	msg := WSMessage{
 		ClientInfo: &clientInfo,
@@ -136,6 +137,7 @@ func TestWebsockets_Client(t *testing.T) {
 		s.DB.First(&updatedDevice, "id = ?", deviceID)
 		return updatedDevice.Info.FirmwareVersion == "1.0.0" && updatedDevice.Info.MACAddress == "00:11:22:33:44:55" &&
 			updatedDevice.Info.ColorOrder != nil && *updatedDevice.Info.ColorOrder == "gbr" &&
+			updatedDevice.Info.Clock8MHz != nil && *updatedDevice.Info.Clock8MHz &&
 			updatedDevice.Info.TouchBeep != nil && *updatedDevice.Info.TouchBeep
 	}, 2*time.Second, 100*time.Millisecond, "Device info was not updated in the database in time")
 

@@ -861,6 +861,22 @@
                                    onchange="updateFirmwareSettings({swap_colors: this.checked})">
                         </div>
                     </div>
+                    {{ if and .Device.Info.Clock8MHz (or (eq .Device.Type.Slug "tidbyt_gen1") (eq .Device.Type.Slug "tidbyt_gen2")) }}
+                    <div class="settings-field-row">
+                        <div class="settings-field-label">
+                            <label for="clock_8mhz">{{ t .Localizer "8MHz Pixel Clock" }}</label>
+                        </div>
+                        <div class="settings-field-control">
+                            <input type="checkbox"
+                                   id="clock_8mhz"
+                                   {{ if derefOr .Device.Info.Clock8MHz false }}
+                                   checked
+                                   {{ end }}
+                                   onchange="updateFirmwareSettings({clock_8mhz: this.checked})">
+                            <p class="settings-help">{{ t .Localizer "Runs the panel at a true 8MHz instead of 10MHz. Fixes red artifacts on some Tidbyt Gen 1 / Gen 2 panels. Requires reboot to take effect." }}</p>
+                        </div>
+                    </div>
+                    {{ end }}
                     {{ if or .Device.HasSpeaker (ne .Device.Info.StartupSound nil) }}
                     <div class="settings-field-row">
                         <div class="settings-field-label">
